@@ -160,11 +160,11 @@ module Wice
       @param_name           = param_name
       @cell_rendering_block = lambda do |object, params|
         selected = if params[grid_name] && params[grid_name][param_name] &&
-                      params[grid_name][param_name].index(object.send(object_property).to_s)
-          true
-        else
-          false
-        end
+                       params[grid_name][param_name].index(object.send(object_property).to_s)
+                     true
+                   else
+                     false
+                   end
         check_box_tag("#{grid_name}[#{param_name}][]", object.send(object_property), selected, :id => nil)
       end
     end
@@ -184,8 +184,8 @@ module Wice
 
       html = content_tag(:span, image_tag(Defaults::TICK_ALL_ICON, :alt => select_all_tootip),
                          :class => 'clickable select_all', :title => select_all_tootip) + ' ' +
-             content_tag(:span, image_tag(Defaults::UNTICK_ALL_ICON, :alt => deselect_all_tootip),
-                         :class => 'clickable deselect_all', :title => deselect_all_tootip)
+        content_tag(:span, image_tag(Defaults::UNTICK_ALL_ICON, :alt => deselect_all_tootip),
+                    :class => 'clickable deselect_all', :title => deselect_all_tootip)
 
       js = JsAdaptor.action_column_initialization(grid.name)
 
@@ -258,9 +258,9 @@ module Wice
         if self.allow_multiple_selection
           select_options[:multiple] = params.is_a?(Array) && params.size > 1
           select_toggle = content_tag(:a,
-            tag(:img, :alt => 'Expand/Collapse', :src => Defaults::TOGGLE_MULTI_SELECT_ICON),
-            :href => "javascript: toggle_multi_select('#{@dom_id}', this, 'Expand', 'Collapse');", # TO DO: to locales
-            :class => 'toggle_multi_select_icon', :title => 'Expand')
+                                      tag(:img, :alt => 'Expand/Collapse', :src => Defaults::TOGGLE_MULTI_SELECT_ICON),
+                                      :href => "javascript: toggle_multi_select('#{@dom_id}', this, 'Expand', 'Collapse');", # TO DO: to locales
+                                      :class => 'toggle_multi_select_icon', :title => 'Expand')
         else
           select_options[:multiple] = false
           select_toggle = ''
@@ -275,9 +275,9 @@ module Wice
 
       '<span class="custom_dropdown_container">'.html_safe_if_necessary +
         content_tag(:select,
-          options_for_select(@custom_filter, params_for_select),
-          select_options) +
-      select_toggle.html_safe_if_necessary + '</span>'.html_safe_if_necessary
+                    options_for_select(@custom_filter, params_for_select),
+                    select_options) +
+        select_toggle.html_safe_if_necessary + '</span>'.html_safe_if_necessary
     end
 
     def yield_declaration_of_column_filter #:nodoc:
@@ -308,7 +308,7 @@ module Wice
     end
   end
 
-  class ViewColumnDatetime < ViewColumn #:nodoc:
+  class ViewColumnDatetimeDefault < ViewColumn #:nodoc:
     @@handled_type[:datetime] = self
     @@handled_type[:timestamp] = self
     include ActionView::Helpers::DateHelper
@@ -349,18 +349,18 @@ module Wice
 
     def render_standard_filter_internal(params) #:nodoc:
       '<div class="date-filter">' +
-      select_datetime(params[:fr], {:include_blank => true, :prefix => @name1}) + '<br/>' +
-      select_datetime(params[:to], {:include_blank => true, :prefix => @name2}) +
-      '</div>'
+        select_datetime(params[:fr], {:include_blank => true, :prefix => @name1}) + '<br/>' +
+        select_datetime(params[:to], {:include_blank => true, :prefix => @name2}) +
+        '</div>'
     end
 
     def render_calendar_filter_internal(params) #:nodoc:
       html1, js1 = datetime_calendar_prototype(params[:fr], @view,
-        {:include_blank => true, :prefix => @name1, :id => @dom_id, :fire_event => auto_reload, :grid_name => self.grid.name},
-        :title => WiceGridNlMessageProvider.get_message(:DATE_SELECTOR_TOOLTIP_FROM))
+                                               {:include_blank => true, :prefix => @name1, :id => @dom_id, :fire_event => auto_reload, :grid_name => self.grid.name},
+                                               :title => WiceGridNlMessageProvider.get_message(:DATE_SELECTOR_TOOLTIP_FROM))
       html2, js2 = datetime_calendar_prototype(params[:to], @view,
-        {:include_blank => true, :prefix => @name2, :id => @dom_id2, :fire_event => auto_reload, :grid_name => self.grid.name},
-        :title => WiceGridNlMessageProvider.get_message(:DATE_SELECTOR_TOOLTIP_TO))
+                                               {:include_blank => true, :prefix => @name2, :id => @dom_id2, :fire_event => auto_reload, :grid_name => self.grid.name},
+                                               :title => WiceGridNlMessageProvider.get_message(:DATE_SELECTOR_TOOLTIP_TO))
       [%!<div class="date-filter">#{html1}<br/>#{html2}</div>!, js1 + js2]
     end
 
@@ -387,32 +387,32 @@ module Wice
 
   end
 
-  class ViewColumnDate < ViewColumnDatetime #:nodoc:
+  class ViewColumnDate < ViewColumnDatetimeDefault #:nodoc:
     @@handled_type[:date] = self
 
     @@datetime_chunk_names = %w(year month day)
 
     def render_standard_filter_internal(params) #:nodoc:
       '<div class="date-filter">' +
-      select_date(params[:fr], {:include_blank => true, :prefix => @name1, :id => @dom_id}) + '<br/>' +
-      select_date(params[:to], {:include_blank => true, :prefix => @name2, :id => @dom_id2}) +
-      '</div>'
+        select_date(params[:fr], {:include_blank => true, :prefix => @name1, :id => @dom_id}) + '<br/>' +
+        select_date(params[:to], {:include_blank => true, :prefix => @name2, :id => @dom_id2}) +
+        '</div>'
     end
 
     def render_calendar_filter_internal(params) #:nodoc:
 
       calendar_helper_method = if Wice::ConfigurationProvider.value_for(:JS_FRAMEWORK) == :prototype
-        :date_calendar_prototype
-      else
-        :date_calendar_jquery
-      end
+                                 :date_calendar_prototype
+                               else
+                                 :date_calendar_jquery
+                               end
 
       html1, js1 = send(calendar_helper_method, params[:fr], @view,
-        {:include_blank => true, :prefix => @name1, :fire_event => auto_reload, :grid_name => self.grid.name},
-        :title => WiceGridNlMessageProvider.get_message(:DATE_SELECTOR_TOOLTIP_FROM))
+                        {:include_blank => true, :prefix => @name1, :fire_event => auto_reload, :grid_name => self.grid.name},
+                        :title => WiceGridNlMessageProvider.get_message(:DATE_SELECTOR_TOOLTIP_FROM))
       html2, js2 = send(calendar_helper_method, params[:to], @view,
-        {:include_blank => true, :prefix => @name2, :fire_event => auto_reload, :grid_name => self.grid.name},
-        :title => WiceGridNlMessageProvider.get_message(:DATE_SELECTOR_TOOLTIP_TO))
+                        {:include_blank => true, :prefix => @name2, :fire_event => auto_reload, :grid_name => self.grid.name},
+                        :title => WiceGridNlMessageProvider.get_message(:DATE_SELECTOR_TOOLTIP_TO))
 
       [%!<div class="date-filter">#{html1}<br/>#{html2}</div>!, js1 + js2]
     end
@@ -427,6 +427,12 @@ module Wice
         render_calendar_filter_internal(params)
       end
     end
+  end
+
+  class ViewColumnDatetime < ViewColumnDate
+    @@handled_type[:datetime] = self
+    @@handled_type[:timestamp] = self
+    @@datetime_chunk_names = %w(year month day)
   end
 
   class ViewColumnString < ViewColumn #:nodoc:
@@ -453,9 +459,9 @@ module Wice
             ''
           end +
           check_box_tag(parameter_name2, '1', (params[:n] == '1'),
-            :id => @dom_id2,
-            :title => WiceGridNlMessageProvider.get_message(:NEGATION_CHECKBOX_TITLE),
-            :class => 'negation_checkbox') +
+                        :id => @dom_id2,
+                        :title => WiceGridNlMessageProvider.get_message(:NEGATION_CHECKBOX_TITLE),
+                        :class => 'negation_checkbox') +
           '</div>'
       else
         @query, _, parameter_name, @dom_id = form_parameter_name_id_and_query('')
